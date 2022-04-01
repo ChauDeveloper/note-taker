@@ -2,15 +2,16 @@ const express = require('express');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
-const {noteArray} = require('./db/db.json');
+const {notes} = require('./db/db.json');
 const fs = require('fs');
 const path = require('path');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.static('public'));
 
-function filterByQuery(query, noteArray) {
-    let filteredResults = noteArray;
+function filterByQuery(query, notes) {
+    let filteredResults = notes;
     if (query.title) {
         filteredResults = filteredResults.filter(note => note.title === query.title)
     }
@@ -20,13 +21,21 @@ function filterByQuery(query, noteArray) {
     return filteredResults;
 }
 
-function findById(id, noteArray) {
-    const result = noteArray.filter(note => note.id === id)[0];
+function findById(id, notes) {
+    const result = notes.filter(note => note.id === id)[0];
     return result;
   }
 
+app.get('/', (req, res)=> {
+    res.sendFile(path.join(__dirname, './public/index.html'))
+})
+
+app.get('/notes', (req, res)=> {
+    res.sendFile(path.join(__dirname, './public/notes.html'))
+})
+
 app.get('/api/notes', (req, res) => {
-    let results = noteArray;
+    let results = notes;
     if (req.query) {
         results = filterByQuery(req.query, results);
       }
@@ -34,7 +43,7 @@ app.get('/api/notes', (req, res) => {
 })
 
 app.get('/api/notes/:id',(req, res) => {
-    const result = findById(req.params.id, noteArray);
+    const result = findById(req.params.id, notes);
     if (result) {
       res.json(result);
     } else {
@@ -42,12 +51,12 @@ app.get('/api/notes/:id',(req, res) => {
     }
 } )
 
-function createNewNote(body, noteArray) {
+function createNewNote(body, notes) {
     const note = body;
-    noteArray.push(note);
+    notes.push(note);
     fs.writeFileSync(
         path.join(__dirname, './db/db.json'),
-        JSON.stringify({ noteArray}, null, 2)
+        JSON.stringify({ notes}, null, 2)
     )
     return note;
 }
@@ -63,21 +72,21 @@ function validateNote(note){
 }
 
 app.post('/api/notes', (req, res) => {
-    req.body.id = noteArray.length.toString();
+    req.body.id = notes.length.toString();
    
 
     if (!validateNote(req.body)) {
         res.status(400).sendStatus('Notes is not formatted');
       } else {
-        const note = createNewNote(req.body, noteArray);
+        const note = createNewNote(req.body, notes);
         res.json(note)
       }
    
 })
 
 app.delete('/api/notes/:id', (req, res) => {
-    const deleteNote = noteArray.findIndex(note => note.id === req.params)
-    noteArray.splice(deleteNote ,1 );
+    const deleteNote = notes.findIndex(note => note.id === req.params)
+    notes.splice(deleteNote ,1 );
     return res.send();
 })
 

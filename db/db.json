@@ -1,5 +1,5 @@
 {
-  "noteArray": [
+  "notes": [
     {
       "id": "0",
       "title": "test title",
@@ -16,13 +16,13 @@
       "text": "test2 text"
     },
     {
-      "title": "test3 title",
-      "text": "test3 text",
+      "title": "test3",
+      "text": "test3",
       "id": "3"
     },
     {
-      "title": "test4 title",
-      "text": "test4 text",
+      "title": "test 4",
+      "text": "test 4",
       "id": "4"
     }
   ]
