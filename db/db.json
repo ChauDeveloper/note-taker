@@ -1,22 +1,29 @@
 {
-    "notes": [
-       {
-          "id": "0",
-           "title":"test title",
-           "text" : "test text"
-           
-       },
-       {
-        "id": "1",
-         "title":"test1 title",
-         "text" : "test 1text"
-         
-     },
-     {
-        "id": "2",
-         "title":"test2 title",
-         "text" : "test2 text"
-         
-     }
-    ]
+  "noteArray": [
+    {
+      "id": "0",
+      "title": "test title",
+      "text": "test text"
+    },
+    {
+      "id": "1",
+      "title": "test1 title",
+      "text": "test 1text"
+    },
+    {
+      "id": "2",
+      "title": "test2 title",
+      "text": "test2 text"
+    },
+    {
+      "title": "test3 title",
+      "text": "test3 text",
+      "id": "3"
+    },
+    {
+      "title": "test4 title",
+      "text": "test4 text",
+      "id": "4"
+    }
+  ]
 }

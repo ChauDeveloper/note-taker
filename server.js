@@ -2,9 +2,12 @@ const express = require('express');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
-const {notes} = require('./db/db.json');
+const {noteArray} = require('./db/db.json');
 const fs = require('fs');
 const path = require('path');
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 function filterByQuery(query, noteArray) {
     let filteredResults = noteArray;
@@ -23,7 +26,7 @@ function findById(id, noteArray) {
   }
 
 app.get('/api/notes', (req, res) => {
-    let results = notes;
+    let results = noteArray;
     if (req.query) {
         results = filterByQuery(req.query, results);
       }
@@ -31,7 +34,7 @@ app.get('/api/notes', (req, res) => {
 })
 
 app.get('/api/notes/:id',(req, res) => {
-    const result = findById(req.params.id, notes);
+    const result = findById(req.params.id, noteArray);
     if (result) {
       res.json(result);
     } else {
@@ -43,7 +46,7 @@ function createNewNote(body, noteArray) {
     const note = body;
     noteArray.push(note);
     fs.writeFileSync(
-        path.join(__dirname, '/db/db.json'),
+        path.join(__dirname, './db/db.json'),
         JSON.stringify({ noteArray}, null, 2)
     )
     return note;
@@ -60,19 +63,25 @@ function validateNote(note){
 }
 
 app.post('/api/notes', (req, res) => {
-    req.body.id = notes.length.toString();
+    req.body.id = noteArray.length.toString();
    
 
     if (!validateNote(req.body)) {
-        res.status(400).send('Notes is not formatted');
+        res.status(400).sendStatus('Notes is not formatted');
       } else {
-        const note = createNewNote(req.body, notes);
+        const note = createNewNote(req.body, noteArray);
         res.json(note)
       }
    
 })
 
+app.delete('/api/notes/:id', (req, res) => {
+    const deleteNote = noteArray.findIndex(note => note.id === req.params)
+    noteArray.splice(deleteNote ,1 );
+    return res.send();
+})
+
 app.listen(PORT, () => {
   console.log(`API server now on port ${PORT}!`);
-  console.log (notes.length.toString())
+//   console.log (req.query)
 });
