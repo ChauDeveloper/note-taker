@@ -43,7 +43,7 @@ function createNewNote(body, noteArray) {
     const note = body;
     noteArray.push(note);
     fs.writeFileSync(
-        path.join(__dirname, './db/db.json'),
+        path.join(__dirname, '/db/db.json'),
         JSON.stringify({ noteArray}, null, 2)
     )
     return note;
@@ -60,7 +60,8 @@ function validateNote(note){
 }
 
 app.post('/api/notes', (req, res) => {
-    res.body.id = notes.length.toString();
+    req.body.id = notes.length.toString();
+   
 
     if (!validateNote(req.body)) {
         res.status(400).send('Notes is not formatted');
@@ -73,4 +74,5 @@ app.post('/api/notes', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`API server now on port ${PORT}!`);
+  console.log (notes.length.toString())
 });
